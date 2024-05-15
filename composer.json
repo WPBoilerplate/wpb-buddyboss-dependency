@@ -9,7 +9,7 @@
         "plugin"
     ],
     "autoload": {
-        "files": ["acrosswp-buddyboss-dependency.php"]
+        "files": ["dependency.php"]
     },
     "support": {
         "issues": "https://github.com/acrosswp/acrosswp-buddyboss-dependency/issues"
