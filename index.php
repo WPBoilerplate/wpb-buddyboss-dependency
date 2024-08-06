@@ -40,6 +40,35 @@ if ( ! class_exists( 'WPBoilerplate_BuddyBoss_Platform_Dependency' ) ) {
 
         /**
          * Load this function on plugin load hook
+         */
+        public function boilerplate_load( $load ) {
+    
+            if ( empty( $this->constant_define() ) ) {
+                $load = false;
+    
+                $this->constant_not_define_hook();
+    
+            } elseif ( $this->constant_define() && empty( $this->constant_mini_version() ) ) {
+                $load = false;
+    
+                $this->constant_mini_version_hook();
+    
+            } elseif (
+                ! empty( $this->component_required() )
+                && $this->constant_define()
+                && ! empty( $this->constant_mini_version() )
+                && empty( $this->required_component_is_active() )
+            ) {
+                $load = false;
+    
+                $this->component_required_hook();
+            }
+    
+            return $load;
+        }
+
+        /**
+         * Load this function on plugin load hook
          * Example: _e('<strong>BuddyBoss Sorting Option In Network Search</strong></a> requires the BuddyBoss Platform plugin to work. Please <a href="https://buddyboss.com/platform/" target="_blank">install BuddyBoss Platform</a> first.', 'sorting-option-in-network-search-for-buddyboss');
          */
         public function constant_not_define_text() {
@@ -102,6 +131,29 @@ if ( ! class_exists( 'WPBoilerplate_BuddyBoss_Platform_Dependency' ) ) {
         }
 
         /**
+         * Check if the Required Component is Active
+         */
+        public function required_component_is_active() {
+            $is_active = false;
+            $component_required = $this->component_required();
+
+            // Active components.
+            $active_components = apply_filters( 'bp_active_components', bp_get_option( 'bp-active-components' ) );
+
+            foreach ( $component_required as $component_require ) {
+                if ( isset( $active_components[ $component_require ] ) ) {
+                    $is_active = true;
+                } else {
+                    $is_active = false;
+                    break;
+                }
+            }
+
+            return $is_active;
+
+        }
+
+        /**
          * Load this function on plugin load hook
          */
         public function constant_name() {
@@ -117,9 +169,42 @@ if ( ! class_exists( 'WPBoilerplate_BuddyBoss_Platform_Dependency' ) ) {
 
         /**
          * Load this function on plugin load hook
+         * Example:
+         array(
+            'members',
+            'xprofile',
+            'settings',
+            'notifications',
+            'groups',
+            'forums',
+            'activity',
+            'media',
+            'document',
+            'video',
+            'messages',
+            'friends',
+            'invites',
+            'moderation',
+            'search',
+            'blogs',
+         );
          */
         public function component_required() {
             return $this->component_required;
+        }
+
+        /**
+         * Load this function on plugin load hook
+         */
+        public function component_required_message() {
+            $this->error_message( 'component_required_text' );
+        }
+
+        /**
+         * Load this function on plugin load hook
+         */
+        public function component_required_hook() {
+            $this->error_message_hooks( 'component_required_message' );
         }
     }
 }
