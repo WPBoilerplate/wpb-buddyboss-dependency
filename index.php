@@ -35,11 +35,6 @@ if ( ! class_exists( 'WPBoilerplate_BuddyBoss_Platform_Dependency' ) ) {
             $this->mini_version         = $mini_version;
             $this->component_required   = $component_required;
 
-			/**
-			 * Action to do update for the plugins
-			 */
-			add_action( 'admin_init', array( $this, 'updater' ), 1000 );
-
             parent::__construct();
 		}
 
