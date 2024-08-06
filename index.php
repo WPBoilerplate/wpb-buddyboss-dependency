@@ -5,18 +5,53 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Check if the class does not exits then only allow the file to add
  */
-if( ! class_exists( 'AcrossWP_BuddyBoss_Platform_Dependency' ) ) {
-    class AcrossWP_BuddyBoss_Platform_Dependency extends AcrossWP_Plugins_Dependency {
+if ( ! class_exists( 'WPBoilerplate_BuddyBoss_Platform_Dependency' ) ) {
+
+    class WPBoilerplate_BuddyBoss_Platform_Dependency extends WPBoilerplate_Plugins_Dependency {
+
+        /**
+		 * Load the mini version of plugins
+		 *
+		 * @since 0.0.1
+		 */
+		public $mini_version;
+
+        /**
+		 * Load the mini version of plugins
+		 *
+		 * @since 0.0.1
+		 */
+		public $component_required = array();
+
+		/**
+		 * Initialize the collections used to maintain the actions and filters.
+		 *
+		 * @since    0.0.1
+		 */
+		public function __construct( $plugin_name, $plugin_files, $mini_version = '2.3.0', $component_required = array() ) {
+
+            $this->plugin_name          = $plugin_name;
+            $this->plugin_files         = $plugin_files;
+            $this->mini_version         = $mini_version;
+            $this->component_required   = $component_required;
+
+			/**
+			 * Action to do update for the plugins
+			 */
+			add_action( 'admin_init', array( $this, 'updater' ), 1000 );
+
+            parent::__construct();
+		}
 
         /**
          * Load this function on plugin load hook
          * Example: _e('<strong>BuddyBoss Sorting Option In Network Search</strong></a> requires the BuddyBoss Platform plugin to work. Please <a href="https://buddyboss.com/platform/" target="_blank">install BuddyBoss Platform</a> first.', 'sorting-option-in-network-search-for-buddyboss');
          */
-        function constant_not_define_text(){
+        public function constant_not_define_text() {
             printf( 
                 __( 
                     '<strong>%s</strong></a> requires the BuddyBoss Platform plugin to work. Please <a href="https://buddyboss.com/platform/" target="_blank">install BuddyBoss Platform</a> first.',
-                    'acrosswp'
+                    'wordpress-plugin-boilerplate'
                 ),
                 $this->get_plugin_name()
             );
@@ -26,11 +61,11 @@ if( ! class_exists( 'AcrossWP_BuddyBoss_Platform_Dependency' ) ) {
          * Load this function on plugin load hook
          * Example: printf( __('<strong>BuddyBoss Sorting Option In Network Search</strong></a> requires BuddyBoss Platform plugin version %s or higher to work. Please update BuddyBoss Platform.', 'sorting-option-in-network-search-for-buddyboss'), $this->mini_version() );
          */
-        function constant_mini_version_text() {
+        public function constant_mini_version_text() {
             printf( 
                 __( 
                     '<strong>%s</strong></a> requires BuddyBoss Platform plugin version %s or higher to work. Please update BuddyBoss Platform.',
-                    'acrosswp'
+                    'wordpress-plugin-boilerplate'
                 ),
                 $this->get_plugin_name(),
                 $this->mini_version()
@@ -41,7 +76,7 @@ if( ! class_exists( 'AcrossWP_BuddyBoss_Platform_Dependency' ) ) {
          * Load this function on plugin load hook
          * Example: printf( __('<strong>BuddyBoss Sorting Option In Network Search</strong></a> requires BuddyBoss Platform plugin version %s or higher to work. Please update BuddyBoss Platform.', 'sorting-option-in-network-search-for-buddyboss'), $this->mini_version() );
          */
-        function component_required_text() {
+        public function component_required_text() {
 
             $bb_components = bp_core_get_components();
             $component_required = $this->component_required();
@@ -64,7 +99,7 @@ if( ! class_exists( 'AcrossWP_BuddyBoss_Platform_Dependency' ) ) {
             printf( 
                 __( 
                     '<strong>%s</strong></a> requires BuddyBoss Platform %s Component to work. Please Active the mentions Component.',
-                    'acrosswp'
+                    'wordpress-plugin-boilerplate'
                 ),
                 $this->get_plugin_name(),
                 $component_required_label
@@ -74,22 +109,22 @@ if( ! class_exists( 'AcrossWP_BuddyBoss_Platform_Dependency' ) ) {
         /**
          * Load this function on plugin load hook
          */
-        function constant_name(){
+        public function constant_name() {
             return 'BP_PLATFORM_VERSION';
         }
 
         /**
          * Load this function on plugin load hook
          */
-        function mini_version(){
-            return '2.3.0';
+        public function mini_version() {
+            return $this->mini_version;
         }
 
         /**
          * Load this function on plugin load hook
          */
         public function component_required() {
-            return array();
+            return $this->component_required;
         }
     }
 }
